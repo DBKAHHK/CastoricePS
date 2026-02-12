@@ -373,8 +373,8 @@ pub fn CustomMode() type {
 pub fn Banner() type {
     return struct {
         var StandardBanner = [_]u32{ 1003, 1004, 1101, 1104, 1209, 1211 };
-        var RateUp = [_]u32{1321};
-        var RateUpFourStars = [_]u32{ 1210, 1108, 1207 };
+        var RateUp = [_]u32{1504};
+        var RateUpFourStars = [_]u32{1224,1001,1013};
 
         pub fn GetStandardBanner() []const u32 {
             return &StandardBanner;
