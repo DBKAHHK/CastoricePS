@@ -25,6 +25,7 @@ pub fn onGetBag(session: *Session, _: ?*const Packet, allocator: Allocator) !voi
     for (Data.PlayerOutfitList) |tid| {
         try rsp.material_list.append(.{ .tid = tid, .num = 1 });
     }
+    try rsp.material_list.append(.{ .tid = 101, .num = 9999 });
 
     for (config.avatar_config.items) |avatarConf| {
         if (avatarConf.lightcone.id != 0) {
