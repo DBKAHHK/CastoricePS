@@ -5,15 +5,13 @@
     .minimum_zig_version = "0.14.0",
     .dependencies = .{
         .httpz = .{
-            .url = "https://github.com/karlseguin/http.zig/archive/ef50c6878c3c512786e3311df657eb425b87ba91.tar.gz",
-            .hash = "1220cf9b8944def0907a43f208a004d9322c6f1972f86792d7f82527965020eb5fba",
+            .path = "../libs/httpz",
         },
         .protocol = .{
             .path = "../protocol",
         },
         .tls = .{
-            .url = "https://github.com/ianic/tls.zig/archive/602f05b.tar.gz",
-            .hash = "12201a2aeb55d0c4a112c5a1806e4d90d734e0e4c21301d4b289f734c3412a883312",
+            .path = "../libs/tls",
         },
     },
     .paths = .{
