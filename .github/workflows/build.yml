@@ -73,7 +73,7 @@ jobs:
           # 创建输出目录（如果不存在）
           New-Item -ItemType Directory -Path zig-out/bin -Force
           # 仅复制指定的资源文件和文件夹，避免混入无关内容
-          Copy-Item -Path protocol, resources, freesr-data.json, hotfix.json, misc.json -Destination zig-out/bin/ -Recurse
+          Copy-Item -Path launcher, protocol, resources, freesr-data.json, hotfix.json, misc.json -Destination zig-out/bin/ -Recurse
 
       - name: Build Windows
         shell: pwsh
