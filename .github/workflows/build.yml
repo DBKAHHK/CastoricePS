@@ -21,7 +21,7 @@ on:
       version:
         description: '版本号 (当创建Release时使用)'
         required: false
-        default: '1.0'
+        default: '1.6.1'
 
 env:
   ZIG_VERSION: 0.14.1
@@ -81,17 +81,19 @@ jobs:
           Write-Host "执行: zig build -Doptimize=ReleaseSafe"
           zig build -Doptimize=ReleaseSafe
 
-      - name: 打包 Windows 构建产物
-        shell: pwsh
-        run: |
-          Compress-Archive -Path zig-out/bin/* -DestinationPath CastoricePS-win.zip -Force
-
       - name: 上传 Windows 构建产物 (Artifact)
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: CastoricePS-win
-          path: CastoricePS-win.zip
+          path: zig-out/bin/
+
+      - name: 打包 Windows 构建产物
+        shell: pwsh
+        run: |
+          Push-Location zig-out/bin
+          Compress-Archive -Path * -DestinationPath ${{ github.workspace }}\CastoricePS-win.zip -Force
+          Pop-Location
 
       - name: 上传到 Release
         uses: softprops/action-gh-release@v2
@@ -146,16 +148,16 @@ jobs:
           echo "执行: zig build -Dtarget=aarch64-linux-android -Doptimize=ReleaseSafe"
           zig build -Dtarget=aarch64-linux-android -Doptimize=ReleaseSafe
 
-      - name: 打包 Android ARM64 构建产物
-        run: |
-          zip -r CastoricePS-android-arm64.zip zig-out/bin/*
-
       - name: 上传 Android ARM64 构建产物 (Artifact)
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: CastoricePS-android-arm64
-          path: CastoricePS-android-arm64.zip
+          path: zig-out/bin/
+
+      - name: 打包 Android ARM64 构建产物
+        run: |
+          (cd zig-out/bin/ && zip -r ${{ github.workspace }}/CastoricePS-android-arm64.zip *)
 
       - name: 上传到 Release
         uses: softprops/action-gh-release@v2
@@ -223,16 +225,16 @@ jobs:
           echo "执行: zig build -Dtarget=arm-linux-androideabi -Doptimize=ReleaseSafe"
           zig build -Dtarget=arm-linux-androideabi -Doptimize=ReleaseSafe
 
-      - name: 打包 Android ARMv7 构建产物
-        run: |
-          zip -r CastoricePS-android-armv7.zip zig-out/bin/*
-
       - name: 上传 Android ARMv7 构建产物 (Artifact)
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: CastoricePS-android-armv7
-          path: CastoricePS-android-armv7.zip
+          path: zig-out/bin/
+
+      - name: 打包 Android ARMv7 构建产物
+        run: |
+          (cd zig-out/bin/ && zip -r ${{ github.workspace }}/CastoricePS-android-armv7.zip *)
 
       - name: 上传到 Release
         uses: softprops/action-gh-release@v2
