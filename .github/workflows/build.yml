@@ -58,6 +58,14 @@ jobs:
             Write-Host "未找到需要修复的文本"
           }
 
+      - name: 提前复制资源文件到输出目录 (Windows)
+        shell: pwsh
+        run: |
+          # 创建输出目录（如果不存在）
+          New-Item -ItemType Directory -Path zig-out/bin -Force
+          # 仅复制指定的资源文件和文件夹，避免混入无关内容
+          Copy-Item -Path protocol, resources, freesr-data.json, hotfix.json, misc.json -Destination zig-out/bin/ -Recurse
+
       - name: Build Windows
         shell: pwsh
         run: |
@@ -101,6 +109,13 @@ jobs:
           else
             echo "未找到需要修复的文本"
           fi
+
+      - name: 提前复制资源文件到输出目录 (Linux)
+        run: |
+          # 创建输出目录（如果不存在）
+          mkdir -p zig-out/bin
+          # 仅复制指定的资源文件和文件夹，避免混入无关内容
+          cp -r protocol resources freesr-data.json hotfix.json misc.json zig-out/bin/
 
       - name: Build Android ARM64
         run: |
@@ -161,6 +176,11 @@ jobs:
           find . -name "*.zig" -type f -exec grep -l "@intCast" {} \; | while read file; do
             echo "已修改文件: $file"
           done
+
+      - name: 提前复制资源文件到输出目录 (Linux)
+        run: |
+          mkdir -p zig-out/bin
+          cp -r protocol resources freesr-data.json hotfix.json misc.json zig-out/bin/
 
       - name: Build Android ARMv7
         run: |
