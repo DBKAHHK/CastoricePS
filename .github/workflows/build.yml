@@ -13,6 +13,15 @@ on:
           - android-arm64
           - android-armv7
           - all
+      create_release:
+        description: '创建Release并上传产物'
+        required: true
+        default: false
+        type: boolean
+      version:
+        description: '版本号 (当创建Release时使用)'
+        required: false
+        default: '1.0'
 
 env:
   ZIG_VERSION: 0.14.1
@@ -72,12 +81,27 @@ jobs:
           Write-Host "执行: zig build -Doptimize=ReleaseSafe"
           zig build -Doptimize=ReleaseSafe
 
-      - name: Upload Windows artifact
+      - name: 打包 Windows 构建产物
+        shell: pwsh
+        run: |
+          Compress-Archive -Path zig-out/bin/* -DestinationPath CastoricePS-win.zip -Force
+
+      - name: 上传 Windows 构建产物 (Artifact)
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: windows-executable
-          path: zig-out/bin/
+          name: CastoricePS-win
+          path: CastoricePS-win.zip
+
+      - name: 上传到 Release
+        uses: softprops/action-gh-release@v2
+        if: success() && github.event.inputs.create_release == 'true'
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: Release ${{ github.event.inputs.version }}
+          files: CastoricePS-win.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-android-arm64:
     if: |
@@ -122,12 +146,26 @@ jobs:
           echo "执行: zig build -Dtarget=aarch64-linux-android -Doptimize=ReleaseSafe"
           zig build -Dtarget=aarch64-linux-android -Doptimize=ReleaseSafe
 
-      - name: Upload Android ARM64 artifact
+      - name: 打包 Android ARM64 构建产物
+        run: |
+          zip -r CastoricePS-android-arm64.zip zig-out/bin/*
+
+      - name: 上传 Android ARM64 构建产物 (Artifact)
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: android-arm64-executable
-          path: zig-out/bin/
+          name: CastoricePS-android-arm64
+          path: CastoricePS-android-arm64.zip
+
+      - name: 上传到 Release
+        uses: softprops/action-gh-release@v2
+        if: success() && github.event.inputs.create_release == 'true'
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: Release ${{ github.event.inputs.version }}
+          files: CastoricePS-android-arm64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-android-armv7:
     if: |
@@ -170,8 +208,6 @@ jobs:
             sed -i 's/\(readToEndAlloc(allocator, \)\([a-zA-Z0-9_]\+\))/\1@intCast(\2))/g' "$file"
           done
           echo "所有文件处理完成"
-          
-          # 验证修改
           echo "验证修改结果："
           find . -name "*.zig" -type f -exec grep -l "@intCast" {} \; | while read file; do
             echo "已修改文件: $file"
@@ -187,9 +223,23 @@ jobs:
           echo "执行: zig build -Dtarget=arm-linux-androideabi -Doptimize=ReleaseSafe"
           zig build -Dtarget=arm-linux-androideabi -Doptimize=ReleaseSafe
 
-      - name: Upload Android ARMv7 artifact
+      - name: 打包 Android ARMv7 构建产物
+        run: |
+          zip -r CastoricePS-android-armv7.zip zig-out/bin/*
+
+      - name: 上传 Android ARMv7 构建产物 (Artifact)
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: android-armv7-executable
-          path: zig-out/bin/
+          name: CastoricePS-android-armv7
+          path: CastoricePS-android-armv7.zip
+
+      - name: 上传到 Release
+        uses: softprops/action-gh-release@v2
+        if: success() && github.event.inputs.create_release == 'true'
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: Release ${{ github.event.inputs.version }}
+          files: CastoricePS-android-armv7.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
