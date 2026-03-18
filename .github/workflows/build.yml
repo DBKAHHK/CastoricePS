@@ -22,6 +22,10 @@ on:
         description: '版本号 (当创建Release时使用)'
         required: false
         default: '1.6.1'
+      release_notes:
+        description: '更新说明 (Release描述)'
+        required: false
+        default: '解压运行，使用代理，安卓貌似需要root权限运行，安卓代理地址https://github.com/Xuoos/AnimeGamesProxy/releases/download/4.1/AnimeGamesProxy-release_4.1.apk'
 
 env:
   ZIG_VERSION: 0.14.1
@@ -99,8 +103,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: success() && github.event.inputs.create_release == 'true'
         with:
-          tag_name: v${{ github.event.inputs.version }}
+          tag_name: ${{ github.event.inputs.version }}
           name: Release ${{ github.event.inputs.version }}
+          body: ${{ github.event.inputs.release_notes }}
           files: CastoricePS-win.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -163,8 +168,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: success() && github.event.inputs.create_release == 'true'
         with:
-          tag_name: v${{ github.event.inputs.version }}
+          tag_name: ${{ github.event.inputs.version }}
           name: Release ${{ github.event.inputs.version }}
+          body: ${{ github.event.inputs.release_notes }}
           files: CastoricePS-android-arm64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -240,8 +246,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: success() && github.event.inputs.create_release == 'true'
         with:
-          tag_name: v${{ github.event.inputs.version }}
+          tag_name: ${{ github.event.inputs.version }}
           name: Release ${{ github.event.inputs.version }}
+          body: ${{ github.event.inputs.release_notes }}
           files: CastoricePS-android-armv7.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
